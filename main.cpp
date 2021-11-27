@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QDirIterator>
+#include <QRandomGenerator>
 //=====================================================================================================
 QStringList GetAllFiles(QString path,QString aliasPath="")
 {
@@ -21,13 +22,13 @@ QStringList GetAllFiles(QString path,QString aliasPath="")
     foreach (QString item, images) {
         if(aliasPath=="")
         {
-         result.append(path+"/"+item);
+            result.append(path+"/"+item);
         }
 
         else {
             result.append(aliasPath+"/"+item);
         }
-       }
+    }
     return  result;
 }
 
@@ -42,10 +43,10 @@ void Mat2Bin(cv::Mat image,QString fileName)
     {
         for(int j=0;j<image.cols;j++)
         {
-           cv::Vec3b pixel=image.at<cv::Vec3b>(i, j);
-           qData.append(pixel[0]);
-           qData.append(pixel[1]);
-           qData.append(pixel[2]);
+            cv::Vec3b pixel=image.at<cv::Vec3b>(i, j);
+            qData.append(pixel[0]);
+            qData.append(pixel[1]);
+            qData.append(pixel[2]);
 
         }
     }
@@ -86,14 +87,15 @@ int main(int argc, char *argv[])
         return 0;
     }
     QStringList files=GetAllFiles(argv[1]);
-QDir dir;
+    QDir dir;
     dir.mkdir(argv[2]);
-for(int i=0;i<files.count();i++)
-{
-    cv::Mat image=cv::imread(files[i].toStdString());
-    QString name=argv[2];
-    name+="//"+QString::number(i)+".png";
-    cv::imwrite(name.toStdString(),LineCamSim(image,5));
-}
+    for(int i=0;i<files.count();i++)
+    {
+        cv::Mat image=cv::imread(files[i].toStdString());
+        QString name=argv[2];
+        name+="//"+QString::number(i)+".png";
+        int random=QRandomGenerator::global()->bounded(4);
+        cv::imwrite(name.toStdString(),LineCamSim(image,random));
+    }
     return  0;
 }
